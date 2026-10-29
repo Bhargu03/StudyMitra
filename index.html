@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMitra | Smart AI Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <!-- Logo/Brand -->
+        <div class="nav-brand">
+            <img src="Studymitra Logo.jpeg" alt="StudyMitra Logo" class="brand-logo">
+            <span class="brand-text"><span class="brand-study">STUDY</span> <span class="brand-mitra">MITRA</span></span>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <button onclick="showPage('home')" class="nav-btn active" title="Dashboard">
+                <i class="fas fa-home"></i>
+                <span class="nav-label">Home</span>
+            </button>
+            <button onclick="showPage('goals')" class="nav-btn" title="Study Goals">
+                <i class="fas fa-bullseye"></i>
+                <span class="nav-label">Goals</span>
+            </button>
+            <button onclick="showPage('materials')" class="nav-btn" title="Study Materials">
+                <i class="fas fa-book"></i>
+                <span class="nav-label">Materials</span>
+            </button>
+            <button onclick="showPage('quiz')" class="nav-btn" title="Practice Tests">
+                <i class="fas fa-question-circle"></i>
+                <span class="nav-label">Quiz</span>
+            </button>
+            <button onclick="showPage('upload')" class="nav-btn" title="AI Upload">
+                <i class="fas fa-upload"></i>
+                <span class="nav-label">Upload</span>
+            </button>
+            <button onclick="showPage('planner')" class="nav-btn" title="Smart Planner">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="nav-label">Planner</span>
+            </button>
+            <button onclick="showPage('analytics')" class="nav-btn" title="Analytics">
+                <i class="fas fa-chart-line"></i>
+                <span class="nav-label">Analytics</span>
+            </button>
+            <button onclick="showPage('leaderboard')" class="nav-btn" title="Leaderboard">
+                <i class="fas fa-trophy"></i>
+                <span class="nav-label">Leaderboard</span>
+            </button>
+            <button onclick="showPage('achievements')" class="nav-btn" title="Achievements">
+                <i class="fas fa-medal"></i>
+                <span class="nav-label">Achievements</span>
+            </button>
+            <button onclick="showPage('profile')" class="nav-btn" title="Profile & Settings">
+                <i class="fas fa-user-cog"></i>
+                <span class="nav-label">Profile</span>
+            </button>
+        </div>
+
+        <!-- Right Actions -->
+        <div class="nav-actions">
+            <div class="notification-bell" onclick="toggleNotifications()" title="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notification-count">3</span>
+            </div>
+            <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+            <button class="user-profile-btn" onclick="toggleUserMenu()" title="Profile">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="User Avatar" class="user-avatar">
+                <span id="user-name" class="user-name-text">User</span>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- User Menu Dropdown -->
+    <div class="user-menu" id="user-menu">
+        <div class="user-menu-header">
+            <i class="fas fa-user-circle"></i>
+            <div>
+                <div id="menu-user-name">User</div>
+                <div class="user-email">student@studymitra.com</div>
+            </div>
+        </div>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" onclick="openProfile()">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+        </button>
+        <button class="user-menu-item" onclick="openSettings()">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </button>
+        <button class="user-menu-item" onclick="openHelp()">
+            <i class="fas fa-question-circle"></i>
+            <span>Help & Support</span>
+        </button>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
+    </div>
+
+    <main class="content">
+        <div class="notification-panel" id="notification-panel">
+            <div class="notification-header">
+                <h4>Notifications</h4>
+                <button onclick="toggleNotifications()" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="notification-list">
+                <div class="notification-item unread">
+                    <i class="fas fa-trophy"></i>
+                    <div class="notification-content">
+                        <p>Great job! You've completed 5 study sessions this week!</p>
+                        <span class="notification-time">2 hours ago</span>
+                    </div>
+                </div>
+                <div class="notification-item unread">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="notification-content">
+                        <p>Don't forget your Data Structures revision today!</p>
+                        <span class="notification-time">5 hours ago</span>
+                    </div>
+                </div>
+                <div class="notification-item">
+                    <i class="fas fa-fire"></i>
+                    <div class="notification-content">
+                        <p>7-day study streak achieved! Keep it up!</p>
+                        <span class="notification-time">1 day ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section id="home" class="page">
+            <div class="glass-card">
+                <h1 id="welcomeMsg">Welcome!</h1>
+                <p id="motivational-quote">"The secret of getting ahead is getting started."</p>
+                <div class="stats">
+                    <div class="stat-item">Progress: <span id="overall-progress">0%</span></div>
+                    <div class="stat-item">Today's Goal: <span id="daily-goal">2 hours</span></div>
+                </div>
+                <div class="timer-section">
+                    <h3>Study Timer</h3>
+                    <div class="timer-display" id="timer-display">00:00:00</div>
+                    <div class="timer-controls">
+                        <button class="btn-secondary" onclick="startTimer()" id="start-btn">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="btn-secondary" onclick="pauseTimer()" id="pause-btn" disabled>
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="btn-secondary" onclick="resetTimer()" id="reset-btn">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="session-stats">
+                        <span>Today's Sessions: <strong id="session-count">0</strong></span>
+                        <span>Total Time: <strong id="total-time">0h 0m</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Goals Page -->
+        <section id="goals" class="page hidden">
+            <div class="page-header">
+                <h2>Study Goals</h2>
+                <button class="btn-primary" onclick="openAddGoalModal()">
+                    <i class="fas fa-plus"></i> Add Goal
+                </button>
+            </div>
+
+            <div class="goals-container" id="goals-container">
+                <!-- Goals will be dynamically added here -->
+            </div>
+
+            <!-- Add Goal Modal -->
+            <div class="modal" id="goal-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Create Study Goal</h3>
+                        <button class="close-modal-btn" onclick="closeGoalModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form onsubmit="saveGoal(event)">
+                        <div class="form-group">
+                            <label>Goal Title</label>
+                            <input type="text" id="goal-title" placeholder="e.g., Master Data Structures" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" id="goal-subject" placeholder="e.g., Computer Science" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Deadline</label>
+                            <input type="date" id="goal-deadline" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select id="goal-priority">
+                                <option value="high">High</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="goal-description" placeholder="Add details about your goal..." rows="3"></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="closeGoalModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">Create Goal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Study Materials Page -->
+        <section id="materials" class="page hidden">
+            <div class="page-header">
+                <h2>Study Materials</h2>
+                <button class="btn-primary" onclick="openAddMaterialModal()">
+                    <i class="fas fa-plus"></i> Add Material
+                </button>
+            </div>
+
+            <!-- Quick Paste Notes Section -->
+            <div class="quick-paste-section" style="background: var(--surface-secondary); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; margin-bottom: 10px;"><i class="fas fa-paste"></i> Quick Paste Notes</h3>
+                <textarea id="quick-paste-notes" placeholder="Paste your notes here to automatically generate a summary..." style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit; resize: vertical; margin-bottom: 10px;"></textarea>
+                <button onclick="quickPasteNotes()" class="btn-primary" style="margin-right: 10px;">
+                    <i class="fas fa-lightning-bolt"></i> Auto-Summarize & Add
+                </button>
+                <button onclick="document.getElementById('quick-paste-notes').value = ''" class="btn-secondary">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+
+            <div class="materials-filter">
+                <input type="text" id="material-search" placeholder="Search materials..." onkeyup="searchMaterials()">
+                <select id="material-type-filter" onchange="filterMaterials()">
+                    <option value="">All Types</option>
+                    <option value="notes">Notes</option>
+                    <option value="formula">Formula</option>
+                    <option value="link">Link</option>
+                    <option value="pdf">PDF Reference</option>
+                </select>
+            </div>
+
+            <div class="materials-container" id="materials-container">
+                <!-- Materials will be dynamically added here -->
+            </div>
+
+            <!-- Add Material Modal -->
+            <div class="modal" id="material-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add Study Material</h3>
+                        <button class="close-modal-btn" onclick="closeMaterialModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form onsubmit="saveMaterial(event)">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="material-title" placeholder="e.g., Binary Trees Notes" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="material-type" required>
+                                <option value="">Select Type</option>
+                                <option value="notes">Notes</option>
+                                <option value="formula">Formula</option>
+                                <option value="link">Resource Link</option>
+                                <option value="pdf">PDF Reference</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject/Topic</label>
+                            <input type="text" id="material-subject" placeholder="e.g., Data Structures" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Content / URL</label>
+                            <textarea id="material-content" placeholder="Enter your notes, formula, or paste any URL (e.g., https://example.com) to enable summarization..." rows="5" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Tags (comma-separated)</label>
+                            <input type="text" id="material-tags" placeholder="e.g., trees, dsa, important">
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="closeMaterialModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">Save Material</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz/Practice Tests Page -->
+        <section id="quiz" class="page hidden">
+            <div class="page-header">
+                <h2>Practice Tests</h2>
+                <button class="btn-primary" onclick="openAddQuizModal()">
+                    <i class="fas fa-plus"></i> Create Quiz
+                </button>
+            </div>
+
+            <div class="quiz-tabs">
+                <button class="quiz-tab-btn active" onclick="switchQuizTab('available')">
+                    <i class="fas fa-list"></i> Available Quizzes
+                </button>
+                <button class="quiz-tab-btn" onclick="switchQuizTab('history')">
+                    <i class="fas fa-history"></i> Quiz History
+                </button>
+            </div>
+
+            <!-- Available Quizzes Tab -->
+            <div id="quiz-available" class="quiz-tab-content active">
+                <div class="quizzes-container" id="quizzes-container">
+                    <!-- Quizzes will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Quiz History Tab -->
+            <div id="quiz-history" class="quiz-tab-content hidden">
+                <div class="quiz-history-container" id="quiz-history-container">
+                    <!-- Quiz attempts history will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Create Quiz Modal -->
+            <div class="modal" id="quiz-modal">
+                <div class="modal-content quiz-modal-content">
+                    <div class="modal-header">
+                        <h3>Create Practice Quiz</h3>
+                        <button class="close-modal-btn" onclick="closeQuizModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form onsubmit="saveQuiz(event)">
+                        <div class="form-group">
+                            <label>Quiz Title</label>
+                            <input type="text" id="quiz-title" placeholder="e.g., Data Structures Final Test" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" id="quiz-subject" placeholder="e.g., Computer Science" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Questions</label>
+                            <input type="number" id="quiz-question-count" min="1" max="50" value="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time Limit (minutes)</label>
+                            <input type="number" id="quiz-time-limit" min="5" max="180" value="30" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Difficulty Level</label>
+                            <select id="quiz-difficulty">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-file"></i> Auto-Generate from File (Optional)</label>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px;">Upload study material to auto-generate quiz questions</p>
+                            <input type="file" id="quiz-file-upload" accept=".txt,.pdf,text/plain,application/pdf" style="margin-bottom: 10px;">
+                            <button type="button" class="btn-secondary" onclick="autoGenerateQuizFromFile()" style="width: 100%;">
+                                <i class="fas fa-magic"></i> Generate Questions from File
+                            </button>
+                            <small style="color: var(--text-secondary); display: block; margin-top: 8px;">Auto-generated questions will be added below. You can still add or edit questions manually.</small>
+                        </div>
+                        <div id="quiz-questions-container">
+                            <!-- Questions will be dynamically added here -->
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="addQuizQuestion()">
+                            <i class="fas fa-plus"></i> Add Question
+                        </button>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="closeQuizModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">Create Quiz</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quiz Taking Modal -->
+            <div class="modal" id="quiz-taking-modal">
+                <div class="modal-content quiz-modal-content">
+                    <div class="quiz-header">
+                        <h3 id="quiz-taking-title">Quiz Title</h3>
+                        <div class="quiz-timer" id="quiz-timer">30:00</div>
+                    </div>
+                    <form id="quiz-taking-form" onsubmit="submitQuizAttempt(event)">
+                        <div id="quiz-questions-display">
+                            <!-- Questions will be displayed here -->
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="closeQuizTakingModal()">Quit Quiz</button>
+                            <button type="submit" class="btn-primary">Submit Quiz</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="upload" class="page hidden">
+            <div class="glass-card">
+                <h2>AI Question Paper Analyzer</h2>
+                <p>Upload your PYQs (PDF) to identify high-weightage topics.</p>
+                <input type="file" id="pdfUpload" accept="application/pdf">
+                <button class="btn-primary" onclick="analyzePDF()" id="analyzeBtn">
+                    <i class="fas fa-brain"></i> Analyze with AI
+                </button>
+                <div id="status"></div>
+            </div>
+        </section>
+
+        <section id="planner" class="page hidden">
+            <div class="planner-header">
+                <h2>Your AI-Generated Schedule</h2>
+                <div class="prediction-badge">Score Prediction: <span id="score-val">--</span>%</div>
+            </div>
+            <div id="calendar-grid"></div>
+        </section>
+
+        <section id="analytics" class="page hidden">
+            <div class="glass-card">
+                <h2>Performance Analytics</h2>
+
+                <div class="streak-badge">
+                    <span class="fire-icon">🔥</span>
+                    <h3 id="streakCount">0 Day Streak</h3>
+                    <p>Keep going! Don't break the chain.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h4>Topics Covered</h4>
+                        <p id="coveredCount">0/0</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Confidence Level</h4>
+                        <p id="confidence">Medium</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Page -->
+        <section id="profile" class="page hidden">
+            <div class="profile-page">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <img id="profile-avatar-large" src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Profile Avatar" class="profile-avatar-large">
+                    <div class="profile-header-content">
+                        <h1 id="profile-header-name">User</h1>
+                        <p id="profile-header-email">student@studymitra.com</p>
+                    </div>
+                    <button class="btn-primary" onclick="openProfileEditModal()">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+
+
+
+                <!-- Profile Content -->
+                <div class="profile-content">
+
+
+
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Edit Modal -->
+        <div class="profile-modal" id="profile-modal">
+            <div class="profile-modal-content">
+                <div class="profile-modal-header">
+                    <h2>Edit Profile</h2>
+                    <button class="close-modal-btn" onclick="closeProfileModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="profile-form" onsubmit="saveProfile(event)">
+                    <div class="profile-form-group">
+                        <label for="profile-avatar">Profile Picture</label>
+                        <div class="avatar-upload">
+                            <img id="avatar-preview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Avatar Preview" class="avatar-preview-img">
+                            <div class="avatar-upload-btns">
+                                <button type="button" class="btn-secondary" onclick="randomizeAvatar()">
+                                    <i class="fas fa-dice"></i> Random Avatar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="profile-name">Full Name</label>
+                        <input type="text" id="profile-name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="profile-email">Email Address</label>
+                        <input type="email" id="profile-email" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="profile-enrollment">Enrollment Number</label>
+                        <input type="text" id="profile-enrollment" placeholder="e.g., 25BT04009" required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="profile-phone">Phone Number</label>
+                        <input type="tel" id="profile-phone" placeholder="Your phone number">
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="profile-course">Course/Major</label>
+                        <input type="text" id="profile-course" placeholder="e.g., Computer Science">
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="profile-college">College/University</label>
+                        <input type="text" id="profile-college" placeholder="Your institution name">
+                    </div>
+
+                    <div class="profile-form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
